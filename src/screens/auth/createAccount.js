@@ -2,36 +2,18 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useState, useRef } from "react";
-import Amplify, { Auth } from "aws-amplify";
-import awsconfig from "../../aws-exports";
-// import awsconfig from "./aws-exports";
-// Amplify.configure(awsconfig);
+import { useState, useRef, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import isEmail from "validator/es/lib/isEmail";
 
-Amplify.configure(awsconfig);
 const CreateAccount = () => {
   const email = useRef();
   const password = useRef();
   const password2 = useRef();
 
-  const [error, setError] = useState();
+  const { state, signUp, addError } = useContext(AuthContext);
+
   const [loading, setLoading] = useState(false);
-  async function signUp() {
-    try {
-      const { user } = await Auth.signUp({
-        username: email.current.value,
-        password: password.current.value,
-        attributes: {
-          email: email.current.value,
-        },
-      });
-      console.log(user);
-    } catch (error) {
-      //setError("There was an error. Couldn't create the account");
-      setError(error.message);
-    }
-  }
 
   return (
     <>
@@ -82,10 +64,10 @@ const CreateAccount = () => {
           ></TextField>
         </Grid>
 
-        {error && (
+        {state.error && (
           <Grid item>
             <Typography color="error" variant="body2" sx={{ fontWeight: 600 }}>
-              {error}
+              {state.error}
             </Typography>
           </Grid>
         )}
@@ -101,11 +83,11 @@ const CreateAccount = () => {
               // )
               setLoading(true);
               if (password.current.value !== password2.current.value) {
-                setError("Passwords do not match");
+                addError("Passwords do not match");
               } else if (!isEmail(email.current.value)) {
-                setError("Enter a valid email address");
+                addError("Enter a valid email address");
               } else {
-                await signUp();
+                await signUp(email.current.value, password.current.value);
               }
               setLoading(false);
             }}
