@@ -57,6 +57,18 @@ const Login = () => {
             Forgot Password?
           </Typography>
         </Grid>
+
+        <Grid item>
+          <Typography
+            component="a"
+            href="/create"
+            color="secondary"
+            variant="body2"
+            sx={{ fontWeight: 600 }}
+          >
+            Create a new account
+          </Typography>
+        </Grid>
       </Grid>
     </>
   );

@@ -5,10 +5,14 @@ import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
 //import Paper from "@mui/material/Paper";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Login from "./screens/loginScreen";
-import ForgottenPassword from "./screens/forgottenPassword";
+import Login from "./screens/auth/loginScreen";
+import ForgottenPassword from "./screens/auth/forgottenPassword";
 import theme from "./theme/theme";
 import { ThemeProvider } from "@mui/material/styles";
+import CreateAccount from "./screens/auth/createAccount";
+import Amplify from "aws-amplify";
+import awsconfig from "./aws-exports";
+Amplify.configure(awsconfig);
 function App() {
   return (
     <>
@@ -29,6 +33,9 @@ function App() {
             </Route>
             <Route path="/forgot">
               <ForgottenPassword></ForgottenPassword>
+            </Route>
+            <Route path="/create">
+              <CreateAccount></CreateAccount>
             </Route>
           </Switch>
         </BrowserRouter>
