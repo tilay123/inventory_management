@@ -5,7 +5,8 @@ import Typography from "@mui/material/Typography";
 import { useState, useRef, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import isEmail from "validator/es/lib/isEmail";
-
+import { useHistory } from "react-router-dom";
+//import ConfirmUser from "./confirmUser";
 const CreateAccount = () => {
   const email = useRef();
   const password = useRef();
@@ -14,6 +15,7 @@ const CreateAccount = () => {
   const { state, signUp, addError } = useContext(AuthContext);
 
   const [loading, setLoading] = useState(false);
+  let history = useHistory();
 
   return (
     <>
@@ -87,8 +89,16 @@ const CreateAccount = () => {
               } else if (!isEmail(email.current.value)) {
                 addError("Enter a valid email address");
               } else {
-                await signUp(email.current.value, password.current.value);
+                try {
+                  await signUp(email.current.value, password.current.value);
+                  history.replace(`/confirm-user?email=${email.current.value}`);
+                } catch (err) {
+                  addError(err.message);
+
+                  setLoading(false);
+                }
               }
+
               setLoading(false);
             }}
           >
