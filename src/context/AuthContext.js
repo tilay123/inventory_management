@@ -88,10 +88,9 @@ const AuthProvider = ({ children }) => {
   const confirmUser = async (email, code) => {
     try {
       console.log(`email: ${email} code ${code}`);
-      const user = await Auth.confirmSignUp(email, code);
-
+      await Auth.confirmSignUp(email, code);
     } catch (error) {
-     // dispatch({ type: "add_error", payload: { error: error.message } });
+      // dispatch({ type: "add_error", payload: { error: error.message } });
       console.log("error confirmUser", error.message);
       throw error;
     }

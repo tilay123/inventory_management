@@ -29,7 +29,7 @@ function App() {
           <AppBar position="static" sx={{ margin: 0 }}>
             <Toolbar>
               <Typography variant="h6" component="div">
-                User Management App
+                Inventory Management App
               </Typography>
               {!!state.user && (
                 <Button

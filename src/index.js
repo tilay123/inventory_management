@@ -2,14 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import AuthProvider from "./context/AuthContext";
-import Amplify from "aws-amplify";
+import ItemProvider from "./context/ItemContext";
+import Amplify, { AuthModeStrategyType } from "aws-amplify";
 import awsconfig from "./aws-exports";
-Amplify.configure(awsconfig);
+Amplify.configure({
+  ...awsconfig,
+  DataStore: { authModeStrategyType: AuthModeStrategyType.MULTI_AUTH },
+});
 
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <ItemProvider>
+        <App />
+      </ItemProvider>
     </AuthProvider>
   </React.StrictMode>,
   document.getElementById("root")
