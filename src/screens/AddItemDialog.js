@@ -22,19 +22,29 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 const AddItemDialog = () => {
-  const name = useRef();
-  const description = useRef();
+  const name = useRef("");
+  const description = useRef("");
   const quantity = useRef();
-  const visibility = useRef();
+  const [visibility, setVisibility] = useState("Public");
   const [expDate, setExpDate] = React.useState(new Date());
   // const expirationDate = useRef();
 
   const [loading, setLoading] = useState(false);
 
+  // eslint-disable-next-line
+  const [validation, setValidation] = useState({
+    nameIsValid: true,
+    descriptionIsValid: true,
+    quantityIsValid: true,
+    visibilityIsValid: true,
+  });
+
   //fetchCurrentUser
 
   const { state, toggleItemDialog } = useContext(ItemContext);
   // const { state } = useContext(AuthContext);
+
+  //console.log("name.current.value", name.current.value);
 
   return (
     <div>
@@ -86,6 +96,12 @@ const AddItemDialog = () => {
               inputRef={name}
               placeholder="Enter item's name"
               required
+              error={!validation.nameIsValid}
+              helperText={
+                !validation.nameIsValid
+                  ? "Name must be at least 2 characters"
+                  : ""
+              }
             ></TextField>
           </Grid>
 
@@ -94,6 +110,12 @@ const AddItemDialog = () => {
               fullWidth
               inputRef={description}
               placeholder="Enter item's description"
+              error={!validation.descriptionIsValid}
+              helperText={
+                !validation.descriptionIsValid
+                  ? "Description must be at least 5 characters"
+                  : ""
+              }
               required
             ></TextField>
           </Grid>
@@ -103,6 +125,13 @@ const AddItemDialog = () => {
               fullWidth
               inputRef={quantity}
               type="number"
+              InputProps={{ inputProps: { min: 0, max: 99999 } }}
+              error={!validation.quantityIsValid}
+              helperText={
+                !validation.quantityIsValid
+                  ? "Quantity must be between 1 and 99999"
+                  : ""
+              }
               placeholder="Enter item's quantity"
               required
             ></TextField>
@@ -112,11 +141,11 @@ const AddItemDialog = () => {
             <FormControl fullWidth>
               <InputLabel>Visibility</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                InputRef={visibility}
+                labelId="pick_visibility"
+                value={visibility}
                 label="Visibility mode"
-                // onChange={handleChange}
+                error={!validation.visibilityIsValid}
+                onChange={(event) => setVisibility(event.target.value)}
               >
                 <MenuItem value="Public">Public</MenuItem>
                 <MenuItem value="Private">Private</MenuItem>
@@ -128,16 +157,18 @@ const AddItemDialog = () => {
             <LocalizationProvider dateAdapter={DateAdapter}>
               {/* npm install date-fns */}
               <DateTimePicker
-                renderInput={(params) => <TextField {...params} />}
+                error
                 label="Expiration Date"
                 value={expDate}
                 onChange={(newValue) => {
                   setExpDate(newValue);
                 }}
-                minDate={new Date("2015-01-01")}
+                minDate={new Date()}
                 maxDate={new Date("2200-01-01")}
                 minTime={new Date(0, 0, 0, 8)}
                 maxTime={new Date(0, 0, 0, 18, 45)}
+                // helperText="Your error message"
+                renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -162,6 +193,31 @@ const AddItemDialog = () => {
               onClick={async () => {
                 setLoading(true);
                 // await saveData();
+
+                setValidation({
+                  nameIsValid:
+                    //name?.current?.value != null &&
+                    name?.current?.value?.trim()?.length > 1,
+                  descriptionIsValid:
+                    // description?.current?.value != null &&
+                    description?.current?.value?.trim()?.length > 4,
+                  quantityIsValid:
+                    //quantity?.current?.value != null &&
+                    quantity?.current?.value > 0 &&
+                    quantity?.current?.value < 99999,
+                  visibilityIsValid:
+                    visibility === "Public" || visibility === "Private",
+                });
+
+                console.log(`name:${name.current.value}`);
+
+                console.log(`${description.current.value}`);
+
+                console.log(`${quantity.current.value}`);
+
+                console.log(`visibility ${visibility}`);
+                console.log(`${expDate.toISOString()}`);
+
                 setLoading(false);
               }}
             >

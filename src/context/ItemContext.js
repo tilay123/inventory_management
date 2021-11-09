@@ -30,7 +30,7 @@ const ItemProvider = ({ children }) => {
   async function saveItem(itemData) {
     try {
       await DataStore.save(new Item(itemData));
-      console.log("Task Successfully saved");
+      console.log("Item Successfully saved");
     } catch (err) {
       console.log("Error", err.message);
     }
