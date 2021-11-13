@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 export default createTheme({
   palette: {
-    mode: "light",
+    mode: "dark",
     primary: {
       main: "#189AB4",
     },

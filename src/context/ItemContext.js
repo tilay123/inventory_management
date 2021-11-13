@@ -1,8 +1,8 @@
-import React, { createContext, useReducer } from "react";
-import { DataStore } from "@aws-amplify/datastore";
-import { Item } from "../models";
+import React, { createContext, useReducer, useCallback } from "react";
+import { DataStore, Predicates } from "@aws-amplify/datastore";
+import { Item, Visibility } from "../models";
 
-const initialState = { openDialog: false };
+const initialState = { openDialog: false, rowData: [] };
 
 export const ItemContext = createContext(initialState);
 
@@ -12,8 +12,8 @@ const itemReducer = (state, action) => {
       return { ...state, openDialog: !state.openDialog };
     // case "sign_up":
     //   return { ...state, user: action.payload.user, error: null };
-    case "set_open_dialog":
-      return { ...state, openDialog: !state.openDialog };
+    case "add_table_row_data":
+      return { ...state, rowData: action.payload.rowData };
 
     default:
       return state;
@@ -29,10 +29,39 @@ const ItemProvider = ({ children }) => {
 
   async function saveItem(itemData) {
     try {
-      await DataStore.save(new Item(itemData));
+      await DataStore.save(
+        new Item({
+          ...itemData,
+          visibility:
+            itemData.visibility.toLowerCase() === "public"
+              ? Visibility.PUBLIC
+              : Visibility.PRIVATE,
+        })
+      );
       console.log("Item Successfully saved");
     } catch (err) {
       console.log("Error", err.message);
+    }
+  }
+
+  const getAllItems = useCallback(async () => {
+    try {
+      const data = await DataStore.query(Item);
+      console.log("getAllItems", data);
+      dispatch({ type: "add_table_row_data", payload: { rowData: data } });
+      //return data;
+    } catch (err) {
+      console.log("Query Failed", err.message);
+    }
+  }, []);
+
+  async function getPaginatedItems(page, limit) {
+    try {
+      const data = await DataStore.query(Item, Predicates.ALL, { page, limit });
+      console.log("getPaginatedItems", data);
+      //return data;
+    } catch (err) {
+      console.log("Query Failed", err.message);
     }
   }
 
@@ -42,6 +71,8 @@ const ItemProvider = ({ children }) => {
         state,
         toggleItemDialog,
         saveItem,
+        getAllItems,
+        getPaginatedItems,
       }}
     >
       {children}

@@ -41,7 +41,7 @@ const AddItemDialog = () => {
 
   //fetchCurrentUser
 
-  const { state, toggleItemDialog } = useContext(ItemContext);
+  const { state, toggleItemDialog, saveItem } = useContext(ItemContext);
   // const { state } = useContext(AuthContext);
 
   //console.log("name.current.value", name.current.value);
@@ -68,7 +68,7 @@ const AddItemDialog = () => {
               Add Item to Inventory
             </Typography>
             <Button autoFocus color="inherit" onClick={toggleItemDialog}>
-              save
+              Close
             </Button>
           </Toolbar>
         </AppBar>
@@ -157,13 +157,12 @@ const AddItemDialog = () => {
             <LocalizationProvider dateAdapter={DateAdapter}>
               {/* npm install date-fns */}
               <DateTimePicker
-                error
                 label="Expiration Date"
                 value={expDate}
                 onChange={(newValue) => {
                   setExpDate(newValue);
                 }}
-                minDate={new Date()}
+                minDate={new Date("2020-01-01")}
                 maxDate={new Date("2200-01-01")}
                 minTime={new Date(0, 0, 0, 8)}
                 maxTime={new Date(0, 0, 0, 18, 45)}
@@ -192,7 +191,6 @@ const AddItemDialog = () => {
               disabled={loading}
               onClick={async () => {
                 setLoading(true);
-                // await saveData();
 
                 setValidation({
                   nameIsValid:
@@ -208,6 +206,21 @@ const AddItemDialog = () => {
                   visibilityIsValid:
                     visibility === "Public" || visibility === "Private",
                 });
+
+                if (
+                  validation.nameIsValid &&
+                  validation.descriptionIsValid &&
+                  validation.quantityIsValid &&
+                  validation.visibilityIsValid
+                ) {
+                  await saveItem({
+                    name: name.current.value.trim(),
+                    description: description.current.value.trim(),
+                    quantity: Number(quantity.current.value),
+                    visibility,
+                    expirationDate: expDate.toISOString(),
+                  });
+                }
 
                 console.log(`name:${name.current.value}`);
 
