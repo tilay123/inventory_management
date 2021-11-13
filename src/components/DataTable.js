@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { ItemContext } from "../context/ItemContext";
-import Button from "@mui/material/Button";
+//import Button from "@mui/material/Button";
 
 const columns = [
   { id: "name", label: "Name", minWidth: 170 },
@@ -70,7 +70,7 @@ export default function DataTable() {
   console.log("Hello from DataTable");
   return (
     <Paper sx={{ height: "100%", mt: 5, mx: 5 }}>
-      <Button onClick={getAllItems}>Get All Data</Button>
+      {/* <Button onClick={getAllItems}>Get All Data</Button> */}
       <TableContainer>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -89,7 +89,7 @@ export default function DataTable() {
 
           <TableBody>
             {state.rowData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage + 1)
               .map((row) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>

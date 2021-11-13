@@ -1,0 +1,14 @@
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+type Item @model @auth(rules: [{allow: private, operations: [read]}, {allow: owner, operations: [create, update, delete]}]) {
+  id: ID!
+  description: String
+  name: String!
+  expirationDate: AWSDateTime
+  visibility: Visibility!
+  quantity: Int!
+}
+  
